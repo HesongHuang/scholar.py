@@ -23,5 +23,24 @@ Run the program journal_name.py .
 
 (3)To search the keywords of every journal, run Pubmed_searchkeywords.py. It will get the keywords on Pubmed.
 
+Prerequisite Packages:
+----------
+(1)Requires [Beautiful Soup](https://www.crummy.com/software/BeautifulSoup/)
+For example:
+pip install beautifulsoup4
+
+(2)Requires [matplotlib] (to draw the diagram of journals)
+For example:
+pip install matplotlib
+
+(3)Requires [Biopython](https://marcobonzanini.com/2015/01/12/searching-pubmed-with-python/)(to parse Pubmed)
+For example:
+sudo pip install biopython
+
+(4)Requires [wordcloud](https://github.com/amueller/word_cloud/)(draw the diagram of keywords)
+For example:
+pip install wordcloud
+
+
 
 
