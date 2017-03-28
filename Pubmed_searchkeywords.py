@@ -3,7 +3,7 @@ import types
 import json
 import pdb
 from os import path
-from wordcloud import WordCloud
+
 
 Entrez.email = 'huanghesong3231@yahoo.com'
 list_json=[]
@@ -30,7 +30,7 @@ def search(query):
     return str
     
 def getkeywords(id_number):
-    file = open('constitution.txt', 'w')
+    file = open('keywords.txt', 'w')
     handle = Entrez.efetch(db="pubmed", id=id_number,rettype="abstract", retmode="xml")
     a=handle.read()
     b=a.split("\n")
@@ -50,14 +50,3 @@ if __name__=="__main__":
    for i in list_json:
        str = search(i)
        getkeywords(str)
-   d = path.dirname(__file__)
-   text = open(path.join(d, 'constitution.txt')).read()
-   wordcloud = WordCloud().generate(text)
-   import matplotlib.pyplot as plt
-   plt.imshow(wordcloud)
-   plt.axis("off")
-   wordcloud = WordCloud(max_font_size=40).generate(text)
-   plt.figure()
-   plt.imshow(wordcloud)
-   plt.axis("off")
-   plt.show()
