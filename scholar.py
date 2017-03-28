@@ -245,7 +245,7 @@ class ScholarConf(object):
 
     VERSION = '3.0'
     LOG_LEVEL = 1
-    MAX_PAGE_RESULTS = 10
+    MAX_PAGE_RESULTS = 20
     MAX_RESULTS = 1000 # Current default for per-page results
     SCHOLAR_SITE = 'http://scholar.google.com'
 
