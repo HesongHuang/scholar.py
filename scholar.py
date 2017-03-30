@@ -161,6 +161,7 @@ page. It is not a recursive crawler.
 # IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+
 import optparse
 import os
 import re
@@ -733,6 +734,7 @@ class CitesScholarQuery(ScholarQuery):
         self._add_attribute_type('num_results', 'Results', 0)
         self.cites = None
         self.set_cites(cites)
+        self.page=0
         
    def set_cites(self, cites):
         """
@@ -1084,12 +1086,15 @@ class ScholarQuerier(object):
         self.query = query
         self.list=[]
         startSearchNumber = 0
+        if query.page:
+            startSearchNumber = query.page
         scholarResults    = ScholarConf.MAX_RESULTS
         while startSearchNumber < self.query.num_results \
         and startSearchNumber < scholarResults:
           html = self._get_http_response(url=query.get_url(startSearchNumber),
                                          log_msg='dump of query response HTML',
-                                         err_msg='results retrieval failed') 
+                                         err_msg='results retrieval failed')
+          
           if html is None:
               return
           
@@ -1097,6 +1102,8 @@ class ScholarQuerier(object):
           
           startSearchNumber += self.query.num_results_per_page
           scholarResults     =  ScholarConf.MAX_RESULTS 
+        
+        
           
     def get_citation_data(self, article):
         """
@@ -1218,13 +1225,26 @@ def csv(querier, header=False, sep='|'):
 def store(data,file_name):
     with open(file_name, 'w') as json_file:
         json_file.write(json.dumps(data))
+
+def store_1(data,file_name):
+    f1 = open(file_name,'w')
+    f1.write(data)
+    f1.close()
+
         
 def citation_export(querier):
     articles = querier.articles
-    store(querier.list,"bibtex.json")
+    string = ''.join(querier.list)
+    store_1(string,'Bibtex.txt')        #store(querier.list,'bibtex.json')
     for art in articles:
         print (encode(art.as_citation()) +'\n')
- 
+
+def citation_keep_export(querier):
+    articles = querier.articles
+    string = ''.join(querier.list)
+    string = string.encode()
+    with open('Bibtex.txt','ab') as f:
+        f.write(string)
 
 def main():
     usage = """scholar.py [options] <query string>
@@ -1270,6 +1290,8 @@ scholar.py -c 5 -a "albert einstein" -t --none "quantum theory" --after 1970"""
                      help='Maximum number of results')
     group.add_option('-T','--cites-id', metavar='CITES_ID',default=None,
                     help='search articles that cites given title')   #1
+    group.add_option('-K','--page',type='int',metavar='PAGE',default=None,
+                     help='Keep searching the data from where it stop')
     parser.add_option_group(group)
 
     group = optparse.OptionGroup(parser, 'Output format',
@@ -1344,6 +1366,9 @@ scholar.py -c 5 -a "albert einstein" -t --none "quantum theory" --after 1970"""
         query = ClusterScholarQuery(cluster=options.cluster_id)
     elif options.cites_id:
         query = CitesScholarQuery(cites=options.cites_id)
+        if options.page:
+            query.page=options.page
+
     else:
         query = SearchScholarQuery()
         if options.author:
@@ -1378,7 +1403,10 @@ scholar.py -c 5 -a "albert einstein" -t --none "quantum theory" --after 1970"""
     elif options.csv_header:
         csv(querier, header=True)
     elif options.citation is not None:
-        citation_export(querier)
+        if options.page:
+            citation_keep_export(querier)
+        else:
+            citation_export(querier)
     else:
         txt(querier, with_globals=options.txt_globals)
 
@@ -1389,3 +1417,4 @@ scholar.py -c 5 -a "albert einstein" -t --none "quantum theory" --after 1970"""
 
 if __name__ == "__main__":
     sys.exit(main())
+
