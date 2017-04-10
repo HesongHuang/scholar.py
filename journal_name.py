@@ -7,6 +7,7 @@ import pdb
 import types
 import os
 
+name=[]
 def append_record(record):
     with open('Bibtex_format.json','a') as f:
          json.dump(record,f)
@@ -35,9 +36,13 @@ def get_json(file_name):
 		for mate in c:
 			d=mate.split("=")
 			if len(d)==2:   #type of d[0] is srtings
-				d[0]=d[0]
 				bibdic[d[0]]=d[1]		
+			if "title=" in mate:
+				name.append(mate)
 		append_record(bibdic)
+	store(name,"title.json")
+				
+	
 
 if __name__=="__main__":
 	get_json("Bibtex.txt")
