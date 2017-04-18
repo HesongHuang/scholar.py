@@ -7,67 +7,44 @@
 </head>
 <body>
 
-<div id="tumorSite-row-chart"></div>
-<div id="sex-pie-chart"></div>
-<div id="outcome-histogram-chart"></div>
-
-<div>
-<p>
-Exploration of the number of primary tumor site vs outcome vs sex for
-patients studied by the University of Iowa as part of the NCI
-Quantitative Imaging Network.
-</p>
-
-<p>
-All chart entries are selectable using <a href=http://dc-js.github.io/dc.js/>dc</a>
-</p>
-
-<p>
-This demo was created as part of the <a href=http://qiicr.org>QIICR project (U24 CA180918).</a> 
-</p>
-
-<p>
-The work is funded by <a href=http://www.nci.nih.gov>NCI</a>.
-</p>
-</div>
+<div id="row-chart"></div>
+<div id="pie-chart"></div>
 
 <script type="text/javascript" src="/Users/hesonghuang/Desktop/HTML/d3.js"></script>
 <script type="text/javascript" src="/Users/hesonghuang/Desktop/HTML/crossfilter.js"></script>
 <script type="text/javascript" src="/Users/hesonghuang/Desktop/HTML/dc.js"></script>
 <script type="text/javascript">
 
-tumorSiteRowChart = dc.rowChart("#tumorSite-row-chart");
-sexPieChart = dc.pieChart("#sex-pie-chart");
+tumorSiteRowChart = dc.rowChart("#row-chart");
+sexPieChart = dc.pieChart("#pie-chart");
 makePlot = function(data) {
 
   var ndx = crossfilter(data),
       allAccess = ndx.groupAll(),
-      sexDimension = ndx.dimension(function(d) {return d.year;}),
-      studyGroup = sexDimension.group(),
-      tumorSiteDimension = ndx.dimension(function(d) {
-        var tumorStaging = d.journal;
-        return tumorStaging;
+      yearDimension = ndx.dimension(function(d) {return d.year;}),
+      studyGroup = yearDimension.group(),
+      SiteDimension = ndx.dimension(function(d) {
+        var Staging = d.journal;
+        return Staging;
       }),
-      tumorSiteGroup = tumorSiteDimension.group();
+      SiteGroup = SiteDimension.group();
       
-  tumorSiteRowChart
+  SiteRowChart
     .width(5000)
     .height(8400)
     .elasticX(true)
-    .dimension(tumorSiteDimension)
-    .group(tumorSiteGroup)
-    .title( function(p) {return "Primary Tumor Site"} )
+    .dimension(SiteDimension)
+    .group(SiteGroup)
     .legend(dc.legend().x(300).y(10).itemHeight(10).gap(3))
     .xAxis().ticks(4);
 
-  sexPieChart
+  PieChart
     .width(300)
     .height(300)
     .radius(100)
     .cx(170)
-    .dimension(sexDimension)
+    .dimension(yearDimension)
     .group(studyGroup)
-    .title( function(p) {return "Patient Sex"} )
     .legend(dc.legend().x(300).y(10).itemHeight(13).gap(5));
   dc.renderAll();
 };
