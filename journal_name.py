@@ -3,49 +3,50 @@ plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+import pdb
+import types
+import os
 
-def get_json():
+name=[]
+def append_record(record):
+    with open('Bibtex_format.json','a') as f:
+         json.dump(record,f)
+         f.write(os.linesep)
+
+def store(data,file_name):
+    with open(file_name, 'w') as json_file:
+        json_file.write(json.dumps(data))
+
+
+def get_json(file_name):
 	jour=0
 	conf=0
 	list=[]
-	diction={}
 	number=[]
 	name=[]
-	with open('bibtex1.json') as json_file:
-		data = json.load(json_file)
-		for a in data:
-			b = a.split('\n')
-			for m in b: 
-				if "journal={" in m:
-					jour=jour+1
-					diction[m]= diction.get(m,0)+1
-				elif "booktitle={" in m:
-					conf= conf+1
-					diction[m]= diction.get(m,0)+1
-				elif "title" in m:
-					list.append(m) 
-		print ("the number of journal is:",jour)
-		print ("the number of conference is:",conf)
-		print (list)
-		for key in diction:
-			number.append(diction[key])
-			key = key.replace("journal={","")
-			key = key.replace("},","")
-			name.append(key)
-	plt.rcdefaults()
-	fig, ax = plt.subplots()
-
-	y_pos = np.arange(len(name))
-	ax.barh(y_pos, number,
-			color='blue')
-	ax.set_yticks(y_pos)
-	ax.set_yticklabels(name)
-	ax.invert_yaxis()  # labels read top-to-bottom
-	ax.set_xlabel('Number')
-	ax.set_title('How many times a journal has show up')
-
-	plt.show()
 	
+	f = open(file_name,'r')
+	f1 = f.read()   #string
+	f2 = f1.split("@")
+	del f2[0]
+	for a in f2:
+		bibdic={}
+		c=a.split(",\n") 
+		del c[0]
+		for mate in c:
+			d=mate.split("=")
+			if len(d)==2:   #type of d[0] is strings
+				d[0]=d[0].strip() #delete the space
+				d[1]=d[1].replace("{","")
+				d[1]=d[1].replace("}","")
+				bibdic[d[0]]=d[1]	#add new key and value in one diction	
+			if "title=" in mate:
+				name.append(mate)
+		list.append(bibdic);   # add new diction in the list as a key
+	store(list,"Bibtex_format.json")
+				
 	
+
 if __name__=="__main__":
-	get_json()
+	get_json("Bibtex.txt")
+	
