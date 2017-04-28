@@ -39,6 +39,7 @@ def get_json(file_name):
 				d[0]=d[0].strip() #delete the space
 				d[1]=d[1].replace("{","")
 				d[1]=d[1].replace("}","")
+				d[1]=d[1].replace("\n\n","")
 				bibdic[d[0]]=d[1]	#add new key and value in one diction	
 			if "title=" in mate:
 				name.append(mate)
@@ -49,4 +50,3 @@ def get_json(file_name):
 
 if __name__=="__main__":
 	get_json("Bibtex.txt")
-	
